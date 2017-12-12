@@ -2,7 +2,7 @@ import os
 import argparse
 from multiprocessing.pool import Pool
 
-def convert_job(args):
+def convert_job(args, ffmpeg_path):
     for i, (img_dir, output_path) in enumerate(args):
         if i % 10 == 0:
             print('converting {}/{}'.format(i, len(args)))
@@ -11,7 +11,8 @@ def convert_job(args):
         except:
             pass
 
-        cmd = 'ffmpeg -nostats -loglevel 0 -framerate 30 -pattern_type glob -i "{}/*.png" -vf "fps=30,format=yuv420p" {}'.format(img_dir, output_path)
+        cmd = '{} -nostats -loglevel 0 -framerate 30 -pattern_type glob -i "{}/*.png" -vf "fps=30,format=yuv420p" {}'.format(
+            ffmpeg_path, img_dir, output_path)
         os.system(cmd)
     return 0
 
@@ -38,6 +39,10 @@ if __name__ == '__main__':
     parser.add_argument('--n_worker', type=int, help='number of workers', default=2)
 
     args = parser.parse_args()
+    if not os.path.exists(args.ffmpeg_path):
+        print('please install ffmpeg add provide its path!')
+        parser.print_help()
+        exit(-1)
 
     video_dirs, output_paths = get_video_dir_list(args.img_basedir, args.output_basedir)
 
@@ -48,7 +53,7 @@ if __name__ == '__main__':
     # chunk jobs
     chunks = [list(zip(video_dirs, output_paths))[i::args.n_worker] for i in range(args.n_worker)]
     for i in range(args.n_worker):
-        workers.apply(convert_job, (chunks[i], ))
+        workers.apply(convert_job, (chunks[i], args.ffmpeg_path))
 
     workers.close()
     workers.join()
