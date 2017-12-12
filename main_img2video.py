@@ -32,6 +32,7 @@ def get_video_dir_list(input_basedir, output_basedir):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('--ffmpeg_path', type=str, help='ffmpeg executable path', default='/usr/bin/ffmpeg')
     parser.add_argument('--img_basedir', type=str, help='parent folder of all image sequence folders')
     parser.add_argument('--output_basedir', type=str, help='parent output folder of all converted videos')
     parser.add_argument('--n_worker', type=int, help='number of workers', default=2)
