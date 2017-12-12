@@ -28,7 +28,7 @@ def get_video_dir_list(input_basedir, output_basedir):
     not_done_dirnames = sorted(list(set(all_dirs) - set(exist_files)))
     not_done_dirs = map(lambda x: os.path.join(input_basedir, x), not_done_dirnames)
     output_paths = map(lambda x: os.path.join(output_basedir, '{}.mp4'.format(x)), not_done_dirnames)
-
+    print('job done!')
     return not_done_dirs, output_paths
 
 if __name__ == '__main__':
